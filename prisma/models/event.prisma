@@ -1,0 +1,28 @@
+model Event {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String
+  date        DateTime
+  location    String?
+  moreInfoUrl String?
+  createdAt   DateTime     @default(now())
+  companyId   Int
+  company     Company      @relation(fields: [companyId], references: [id])
+  attendees   UserEvents[]
+}
+
+model UserEvents {
+  id             Int            @id @default(autoincrement())
+  userId         Int
+  user           User           @relation(fields: [userId], references: [id])
+  eventId        Int
+  event          Event          @relation(fields: [eventId], references: [id])
+  attendanceType AttendanceType
+
+  @@unique([userId, eventId])
+}
+
+enum AttendanceType {
+  INTERESTED
+  GOING
+}

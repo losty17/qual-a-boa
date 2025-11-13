@@ -1,0 +1,27 @@
+model Company {
+  id           Int          @id @default(autoincrement())
+  name         String
+  profileImage String?
+  website      String?
+  address      String?
+  createdAt    DateTime     @default(now())
+  teamMembers  TeamMember[]
+  events       Event[]
+}
+
+model TeamMember {
+  id        Int      @id @default(autoincrement())
+  role      Role
+  companyId Int
+  company   Company  @relation(fields: [companyId], references: [id])
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  joinedAt  DateTime @default(now())
+
+  @@unique([companyId, userId])
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
