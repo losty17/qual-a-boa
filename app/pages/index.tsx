@@ -1,10 +1,12 @@
-import { prisma } from "~/.server/prisma";
+import { prisma } from "~/lib/prisma.server";
 import type { Route } from "./+types/index";
 import EventCard from "~/components/events/event-card";
 import { Fragment } from "react/jsx-runtime";
 import EventDrawer from "~/components/events/event-drawer";
 import { useState } from "react";
 import type { Event } from "@prisma/client";
+import { auth } from "~/lib/auth.server";
+import { redirect } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -13,10 +15,16 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export async function loader({}: Route.LoaderArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
+  const session = await auth.api.getSession(request);
+  if (!session) return redirect("/login");
+
+  console.log("User session:", session);
+
+  const user = session.user;
   const events = await prisma.event.findMany();
 
-  return { events };
+  return { events, user };
 }
 
 export default function Home({ loaderData: { events } }: Route.ComponentProps) {
