@@ -14,7 +14,7 @@ model TeamMember {
   role      Role
   companyId Int
   company   Company  @relation(fields: [companyId], references: [id])
-  userId    Int
+  userId    String
   user      User     @relation(fields: [userId], references: [id])
   joinedAt  DateTime @default(now())
 
